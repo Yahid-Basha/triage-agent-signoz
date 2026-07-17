@@ -25,11 +25,13 @@ kept honest. This is blog material as much as it is a debug log.
   (clickhouse, postgres, signoz app all stayed at 0.0s / "Running") — it only added the new
   `signoz-mcp` service. Editing casting.yaml + re-cast is safe to iterate on repeatedly.
 
-- **[23:04]** `docker ps` shows `signoz-mcp` as `Up (unhealthy)` 3+ minutes after start, but
-  `docker logs signoz-mcp` shows a completely clean boot — all handlers registered, "Docs
-  index ready" (746 pages), listening on `:8000/mcp`, zero errors. Working theory: Docker's
-  healthcheck probes an endpoint the server doesn't serve for plain GETs (the only documented
-  route, `/mcp`, expects an MCP protocol handshake, not a health ping). Not confirmed via
-  `docker inspect` yet; not blocking anything today. Revisit in Phase 7 — if the actual MCP
-  handshake works despite the red status, this was just a bad healthcheck definition shipped
-  in the image.
+- **[23:04]** `docker ps` showed `signoz-mcp` as `Up (unhealthy)` (66-streak). Confirmed root
+  cause via `docker inspect signoz-mcp --format='{{json .State.Health}}'`: the image's baked-in
+  HEALTHCHECK execs `wget` to hit its own health endpoint, but `wget` isn't installed in
+  `signoz/signoz-mcp-server:latest` — every probe fails with `OCI runtime exec failed: ...
+  exec: "wget": executable file not found in $PATH`. This is an upstream packaging bug in the
+  image, not our casting.yaml. `docker logs` independently confirmed the server itself is
+  fine (clean boot, handlers registered, docs indexed, listening on `:8000/mcp`). Nothing else
+  in the stack depends on signoz-mcp's health status, so this is purely cosmetic — proceeding
+  without patching it. (`casting.yaml` supports `spec.patches` to override the generated
+  healthcheck if a green label is ever wanted for a screenshot; not doing that now.)
