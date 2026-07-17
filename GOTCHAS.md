@@ -121,3 +121,26 @@ kept honest. This is blog material as much as it is a debug log.
   (0.1, and the continuous ROUGE-based quality/calibration scores) show tiny, consistent,
   sub-1e-8 drift. Not a fidelity gap — a provable, traceable float32 artifact from April's
   own pipeline.
+
+## Phase 4 — Full replay, dashboard, queries
+
+- **[02:53]** First full replay attempt hit two low-battery sleep interruptions (charging
+  cable connection issue). Dashboard showed two suspicious sharp dip-and-recover cycles near
+  the start of the run -- too narrow/instant to be a genuine reward collapse (a real collapse
+  should be a sustained multi-step trough, not a spike). Working theory: the OTLP gRPC
+  connection needed to reconnect after each wake, and a step's completions may have partially
+  exported, skewing that step's avg(reward.score). Rather than forensically confirm which
+  training.step values were affected (risk: could overlap the steps 18-28 collapse window
+  this pipeline is about to analyze), chose to secure the charging cable and rerun the full
+  replay clean rather than risk contaminating the central discovery.
+
+- **[03:24]** The clean rerun still hit OTLP export DEADLINE_EXCEEDED 5 times across the full
+  200-step/1600-completion replay (e.g., right after step 140). Non-issue in practice: the
+  pipeline's own "step N done (8 rows)" count kept incrementing normally through every
+  occurrence -- grading never lost track of anything, and the script never stalled. Likely
+  self-healed via the OTLP exporter's built-in retry for this status code. Final dashboard
+  (scoped to just this run's window, 03:07:15-03:15) shows no visible anomaly beyond one
+  expected early-training dip. Treating as non-issue unless the steps 18-28 query surfaces
+  something thin.
+
+- **See COLLAPSE_INVESTIGATION.md for the full narrative** behind the steps 18-28 discovery -- dashboard gotchas, both replay false-starts, the complete score table, and the hypothesis-by-hypothesis root-cause investigation for Query #7 (including the exact parse-failure vs. zero-score match and the byte-level proof).
