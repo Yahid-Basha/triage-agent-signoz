@@ -69,6 +69,55 @@ kept honest. This is blog material as much as it is a debug log.
 - **[23:35]** Fidelity check result (`verify_fidelity.py` on `completions_00001.parquet`, step 1,
   8 rows): `r_format_graduated`, `r_citation_grounding`, `r_repetition_penalty` — exact 0.00e+00
   drift. `r_resolution_quality`, `r_calibration`, `r_parsimony` — drift on the order of 1e-8 to
-  1e-9 (float rounding through pandas/parquet round-trip), an order of magnitude tighter than
+  1e-9 (root cause confirmed in Phase 3 — see entry below; not a parquet-storage issue), an order of magnitude tighter than
   the ~1e-6 the plan expected. **Gate passed**: today's reward code is bit-for-bit the code that
   trained in April.
+
+## Phase 3 — Instrumentation
+
+- **[00:12]** OTel's logs API is still under the `opentelemetry.sdk._logs` / `opentelemetry._logs`
+  namespace (underscore-prefixed = "not yet stabilized" by OTel's own convention), unlike the
+  stable `opentelemetry.sdk.trace` for spans. Log/span correlation itself needs no manual
+  wiring beyond that: `LoggingHandler` reads the *currently active* span context at emit time,
+  so attaching it once to the root logger is enough — every `logging.info(...)` call made while
+  any span is open anywhere in the process gets stamped with that span's trace_id/span_id
+  automatically.
+
+- **[00:14]** Master guide phrases the v1 parsimony bug as "rewards len(text) < 200 chars AND
+  len(text) > 400 chars" — read literally that's impossible (no string is both under 200 and
+  over 400 chars at once). Implemented as the only sensible reading: two independent inverted
+  branches, `score = 1.0 if (n < 200 or n > 400) else 0.0` — both extremes rewarded, the sane
+  200-400 middle penalized to 0. Matches "penalizes the sane middle" in the same sentence.
+
+- **[00:18]** Smoke ran `regrade.py --steps 1-2 --sleep 0.1 --limit 4` against the live SigNoz
+  collector (confirmed listening on :4317 via `docker ps` / `nc -z`) — 4 completions graded, no
+  OTLP export errors on stderr. `hack.signature` (score_v1 >= 0.9 AND quality < 0.10) already
+  tripped **once at step 1** (ticket TRAIN-00043, row 2: score_v1=1.0, quality low because
+  step 1 is the very first gradient step — nothing is converged yet). This is an honest early
+  false-positive-shaped signal, not a bug: v1's length-based reward doesn't know it's step 1 vs
+  step 20, so it fires whenever a completion happens to land outside 200-400 chars regardless of
+  training progress. Worth calling out in the blog: the alert (Phase 5) needs a real window
+  (steps 15-35) to mean anything, a bare `hack.signature=true` count alone isn't sufficient
+  evidence of the collapse.
+
+- **[00:19]** Could not verify traces landed in SigNoz via its query API directly — `/api/v3/
+  query_range` returned `401 unauthenticated` (needs a UI-issued session token/API key I don't
+  have from the CLI). Verified indirectly instead: collector port reachable, zero export errors
+  from the OTLP gRPC exporter (which logs loudly on failed sends), consistent with a successful
+  export. Actual click-into-a-span visual confirmation (per the plan, `[YOU]`, Phase 3 evidence
+  #4) still needs a human in the SigNoz UI.
+
+- **[01:58]** Root cause of Phase 2's ~1e-9 drift on quality/calibration/parsimony,
+  confirmed: while inspecting a live `reward.parsimony` span (trace
+  `7e0fcb54d5311fdf8919b32b42d41ea0`, training.step=3) for Evidence #4,
+  `reward.logged_score` read `0.10000000149011612`, not `0.1`. That exact value is the
+  textbook IEEE-754 float32 representation of 0.1 (`0.100000001490116119384765625`)
+  upcast to float64. This proves April's original reward computation touched float32
+  arithmetic somewhere upstream for this tier — not a parquet column dtype issue
+  (checked and ruled out via `pyarrow.parquet.read_schema`, which showed all reward
+  columns as `double`), and not a continuous-formula artifact either (also considered,
+  also wrong). It explains the whole drift pattern: values exactly representable in both
+  float32 and float64 (0.0, 0.5, 1.0) show exactly 0.00e+00 drift; values that aren't
+  (0.1, and the continuous ROUGE-based quality/calibration scores) show tiny, consistent,
+  sub-1e-8 drift. Not a fidelity gap — a provable, traceable float32 artifact from April's
+  own pipeline.
