@@ -17,7 +17,7 @@
 | 13 | done | Guilty trace + log text | evidence/13 Guilty trace.png + Log details of hacking sign true.png + Log details screenshot of hacking sign true.png | 5 | Climax |
 | 14 | cut | Agent trace waterfall | Phase 6 skipped (time triage) | 6 | -- |
 | 15 | cut | Fresh completion grades | Phase 6 skipped (time triage) | 6 | -- |
-| 16 | needs confirmation | MCP answer citing real trace data | MCP connected in claude code.png -- CONFIRM: does this show the final 443/35-ticket answer, or only the /mcp connection check? If only connection, still need a screenshot of the actual final answer. | 7 | Closing beat |
+| 16 | done | MCP answer citing real trace data -- full investigative journey + final 443/35-ticket table, confirms ~/Desktop/neutral-dir working directory visually | evidence/16 MCP -full run.jpeg | 7 | Closing beat |
 
 Legend: done = captured and usable; needs confirmation = filename ambiguous, verify content; cut = intentional, time triage.
 

@@ -144,3 +144,5 @@ kept honest. This is blog material as much as it is a debug log.
   something thin.
 
 - **See COLLAPSE_INVESTIGATION.md for the full narrative** behind the steps 18-28 discovery -- dashboard gotchas, both replay false-starts, the complete score table, and the hypothesis-by-hypothesis root-cause investigation for Query #7 (including the exact parse-failure vs. zero-score match and the byte-level proof).
+
+- **See QUERIES_8_9_10_INVESTIGATION.md** for overconfidence (#9), optimizer-gap (#10), and post-convergence grounding (#8) findings -- including the cross-query overlap showing TRAIN-00044 and TRAIN-00046 failing across all three independent queries.
