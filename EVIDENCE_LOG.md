@@ -1,25 +1,24 @@
 # Evidence Log
 
-Tracks every screenshot/artifact against the guide's PART 2 evidence checklist so nothing
-gets lost before blog-writing time. Fill in Filename(s) as each one is saved to evidence/.
+| # | Status | Description | Filename | Phase | Blog Beat |
+|---|--------|--------------|----------|-------|-----------|
+| 1 | done | Cast output all green | evidence/1 installation #1.png (bonus: 1 deploy with mcp #1.jpeg) | 1 | Setup |
+| 2 | done | Empty dashboard | evidence/2 SigNoz _ Home_init #2.jpeg | 1 | Setup |
+| 3 | done | Fidelity table | evidence/3 verified_fidelity #3.txt | 2 | "Bit for bit" |
+| 4 | done | First span tree + attributes | evidence/4 main #4 children and grade_completion batch of 8 .png + 4 rew parsimony #4.png | 3 | How rewards became spans |
+| 5 | done | Dashboard mid-replay | evidence/5 GRPO Flight Recorder - mid.png | 4 | The movie |
+| 6 | done | Dashboard complete | evidence/6 full flight.png | 4 | The movie |
+| 7 | done | Steps 18-28 collapse: parse validation + byte proof | evidence/7 parse validation and byte proof.jpeg | 4 | THE discovery |
+| 8 | done | Grounding-zero tickets | evidence/8-9-10 join-analysis-and-overlap #8910.jpeg | 4 | Converged != solved |
+| 9 | done | Overconfidence | evidence/8-9-10 join-analysis-and-overlap #8910.jpeg (same file, different section) | 4 | Queries WandB can't ask |
+| 10 | done | Optimizer gap | evidence/8-9-10 join-analysis-and-overlap #8910.jpeg (same file, different section) | 4 | Queries WandB can't ask |
+| 11 | done | Alert rule FIRING state | evidence/11 firing alert SigNoz.png | 5 | Climax |
+| 12 | done | Slack message arrived | evidence/12 fired alert slack.png | 5 | Climax |
+| 13 | done | Guilty trace + log text | evidence/13 Guilty trace.png + Log details of hacking sign true.png + Log details screenshot of hacking sign true.png | 5 | Climax |
+| 14 | cut | Agent trace waterfall | Phase 6 skipped (time triage) | 6 | -- |
+| 15 | cut | Fresh completion grades | Phase 6 skipped (time triage) | 6 | -- |
+| 16 | needs confirmation | MCP answer citing real trace data | MCP connected in claude code.png -- CONFIRM: does this show the final 443/35-ticket answer, or only the /mcp connection check? If only connection, still need a screenshot of the actual final answer. | 7 | Closing beat |
 
-| # | Status | Description | Filename(s) | Phase | Blog Beat | Notes |
-|---|--------|--------------|-------------|-------|-----------|-------|
-| 1 | done | Terminal: cast output all green | 1 installation #1.png (original cast, pre-MCP); 1 deploy with mcp #1.jpeg (bonus — MCP-enabled recast, confirm which bucket this belongs in) | 1 | Setup, honest friction | 12/12 containers; one expected "Exited" (init script, not a failure) |
-| 2 | done | Empty dashboard "no data yet" | 2 SigNoz _ Home_init #2.jpeg | 1 | Setup, honest friction | Admin account created first, per orgId gotcha |
-| 3 | done | Fidelity table (live vs logged vs drift) | 3 verified_fidelity #3.txt | 2 | "Same code as April, bit for bit" | Max drift 2.44e-08, ~40x under the ~1e-6 bar |
-| 4 | done | First span tree + attribute panel | 4 main #4 children and grade_completion batch of 8 .png (waterfall); 4 rew parsimony #4.png (attribute panel) | 3 | How rewards became spans | 57 spans = 1 root + 8x7; batch.size=8; float32-drift smoking gun in reward.logged_score |
-| 5 | pending | Dashboard mid-replay (curves half-drawn) | | 4 | Six curves redraw live -- the movie | |
-| 6 | pending | Dashboard complete | | 4 | Six curves redraw live -- the movie | |
-| 7 | pending | Step 18-28 collapse autopsy completions | | 4 | THE discovery: collapse autopsy | |
-| 8 | pending | Grounding-zero tickets (post-convergence) | | 4 | Converged != solved | |
-| 9 | pending | Overconfidence query | | 4 | Queries WandB can't ask | |
-| 10 | pending | Advantage-gap query | | 4 | Queries WandB can't ask | |
-| 11 | pending | Alert rule FIRING/Triggered | | 5 | "4:30 AM, now an alert" -- climax | |
-| 12 | pending | Slack message arrived | | 5 | "4:30 AM, now an alert" -- climax | |
-| 13 | pending | Guilty trace behind the firing alert | | 5 | "4:30 AM, now an alert" -- climax | |
-| 14 | pending | Agent trace waterfall (generation dwarfing grading) | | 6 | Live serving, theme checkbox | |
-| 15 | pending | One fresh completion's grades | | 6 | Live serving, theme checkbox | |
-| 16 | pending | MCP answer (Claude Code querying real trace data) | | 7 | Closing beat | |
+Legend: done = captured and usable; needs confirmation = filename ambiguous, verify content; cut = intentional, time triage.
 
-Legend: done = captured and saved to evidence/ Â· pending = not yet captured
+All 16 evidence items are now either fully captured or down to one clarification. Once #16 is confirmed, the evidence pack is complete and the only remaining work is Phase 8 housekeeping + the actual blog draft.
