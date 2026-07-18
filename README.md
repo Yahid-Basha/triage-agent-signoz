@@ -54,10 +54,10 @@ Of the 88 completions across steps 18-28, 47 scored zero on every content reward
 
 ## Links
 
-- April training blog: [ADD URL]
+- April training blog: https://huggingface.co/spaces/yahid/triage_agent_env/blob/main/Blog.md
 - HF Space (OpenEnv environment): https://huggingface.co/spaces/yahid/triage_agent_env
-- Model and completions dataset: yahid/triage-agent-qwen3b
-- WandB run: [ADD URL]
+- Model and completions dataset: [yahid/triage-agent-qwen3b](https://huggingface.co/yahid/triage-agent-qwen3b)
+- WandB run: https://wandb.ai/yahid-sahe/triage-agent-grpo/runs/99l7dg4c/logs?nw=nwuseryahid
 
 ## AI disclosure
 
